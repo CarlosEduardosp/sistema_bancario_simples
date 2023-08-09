@@ -1,11 +1,26 @@
+from classe_conta import Conta
 from classe_cliente import Cliente
 from validacoes import *
 import textwrap
 
 
+clientes = []
+
+
+def menu_cliente():
+    menucliente = """
+    ================ Menu Inicial ==========
+    
+    [l]\tLogin
+    [c]\tCadastrar Cliente
+    [s]\tsair    
+    => """
+    return input(textwrap.dedent(menucliente))
+
+
 def menu():
     menu = """\n
-    ================ MENU ================
+    ================ Conta ================
     [d]\tDepositar
     [s]\tSacar
     [e]\tExtrato   
@@ -15,44 +30,47 @@ def menu():
 
 
 def main():
-    pessoa = Cliente()
-    limite = int(0)
 
     while True:
-        response = menu()
+        resposta = menu_cliente()
 
-        if response == 'd':
-            valor = float(input('Digite o Valor para deposito: '))
-            response = validar_positivos(valor)
-            if response:
-                pessoa.depositar(valor)
-            else:
-                print('Valor não pode ser um numero negativo ou Zero')
+        if resposta == 'l':
+            nome = input('Digite seu nome: ')
 
-        elif response == 'e':
-            pessoa.extrato()
+            x = 1
+            while x == 1:
+                senha = input('Digite sua senha: ')
+                for i in clientes:
+                    if senha == i['cliente'].senha:
+                        print(f'Seja Bem vindo, {nome.title()}')
+                        menu_conta(i['conta'].conta)
+                        x = 2
 
-        elif response == 's':
+        elif resposta == 'c':
 
-            if limite < 3:
-                valor = float(input('Digite o Valor para Saque: '))
-                resp = valor_saque(valor)
-                resp_saldo = verifica_saldo(pessoa.saldo, valor)
-                if resp:
-                    if resp_saldo:
-                        pessoa.sacar(valor)
-                        limite = limite_saque(limite)
-                    else:
-                        print(f'Saldo insuficiente.Saldo Atual: R$ {pessoa.saldo}')
-                else:
-                    print('Valor para saque não pode ultrapassar R$ 500,00.')
+            nome_cliente = input('Digite o seu nome: ')
+            senha_cliente = input('Digite uma senha: ')
 
-            else:
-                print('Você atingiu seu limite de 3 saques diários.')
+            pessoa = Conta(len(clientes) + 1)
 
-        elif response == 'q':
-            print('Sistema Finalizado com Sucesso!!')
+            conta = pessoa.conta + 1
+            cliente = Cliente(nome=nome_cliente, senha=senha_cliente, conta=conta)
+            clientes.append({"cliente": cliente, "conta": pessoa})
+
+            print(f'{nome_cliente.title()}, Sua agencia é {pessoa.agencia} e esse é o numero de sua conta: {pessoa.conta}')
+
+        elif resposta == 's':
+
             break
 
 
+def menu_conta(conta):
+
+    for i in clientes:
+        if conta == i['conta'].conta:
+            pessoa = i
+
+
 main()
+for i in clientes:
+    print(i['cliente'].nome, i['conta'].conta)
